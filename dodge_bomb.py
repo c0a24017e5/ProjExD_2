@@ -26,6 +26,29 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 
+def gameover(screen: pg.Surface) -> None:
+    """
+    gameover の Docstring
+    go = game over の略
+    gm = game mozi の略
+    gk = game koukaton の略
+    """
+    go_img = pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(go_img, (0, 0, 0), (0,0, WIDTH, HEIGHT)) # 黒い四角を描写
+    go_img.set_alpha(190) # 透明度設定
+    gmov = pg.font.Font(None, 80) # game over 用フォント
+    txt = gmov.render("Game Over",
+                       True, (255, 255, 255))
+    txt_rect = txt.get_rect()
+    txt_rect.center = (WIDTH/2, HEIGHT/2) # 画面中央に配置
+    go_img.blit(txt, txt_rect)
+    gk_img = pg.image.load("fig/8.png") # こうかとん画像読み込み
+    go_img.blit(gk_img, [WIDTH/2+170, HEIGHT/2-40]) # 右側にこうかとん配置
+    go_img.blit(gk_img, [WIDTH/2-210, HEIGHT/2-40]) # 左側にこうかとん配置
+    screen.blit(go_img, [0, 0]) 
+    pg.display.update()
+    pg.time.wait(5000) # 5秒間表示
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -48,6 +71,7 @@ def main():
                 return
             
         if kk_rct.colliderect(bb_rct): # こうかとんと爆弾が衝突したら
+            gameover(screen)
             print("GAME OVER")
             return
         
