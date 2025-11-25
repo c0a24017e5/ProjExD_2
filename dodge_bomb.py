@@ -33,12 +33,12 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
-    bb_img = pg.Surface((20,20)) #空のsurface
-    pg.draw.circle(bb_img,(255, 0, 0), (10, 10), 10) #半径10の赤い円を描写
-    bb_img.set_colorkey((0, 0, 0)) #黒色透過
-    bb_rct = bb_img.get_rect() #爆弾rect
-    bb_rct.centerx = random.randint(0,WIDTH) #爆弾座標
-    bb_rct.centery = random.randint(0,HEIGHT) #爆弾座標
+    bb_img = pg.Surface((20,20)) # 空のsurface
+    pg.draw.circle(bb_img,(255, 0, 0), (10, 10), 10) # 半径10の赤い円を描写
+    bb_img.set_colorkey((0, 0, 0)) # 黒色透過
+    bb_rct = bb_img.get_rect() # 爆弾rect
+    bb_rct.centerx = random.randint(0,WIDTH) # 爆弾座標
+    bb_rct.centery = random.randint(0,HEIGHT) # 爆弾座標
     vx ,vy = +5, +5
     clock = pg.time.Clock()
     tmr = 0
@@ -47,7 +47,7 @@ def main():
             if event.type == pg.QUIT: 
                 return
             
-        if kk_rct.colliderect(bb_rct): #こうかとんと爆弾が衝突したら
+        if kk_rct.colliderect(bb_rct): # こうかとんと爆弾が衝突したら
             print("GAME OVER")
             return
         
@@ -66,16 +66,16 @@ def main():
         
         for key, mv in DELTA.items():
             if key_lst[key]:
-                sum_mv[0] += mv[0] #横方向の移動
-                sum_mv[1] += mv[1] #縦方向の移動
+                sum_mv[0] += mv[0] # 横方向の移動
+                sum_mv[1] += mv[1] # 縦方向の移動
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(kk_img, kk_rct)
         yoko, tate = check_bound(bb_rct)
-        if not yoko: #横方向にはみ出ていたら
+        if not yoko: # 横方向にはみ出ていたら
             vx *= -1
-        if not tate: #縦方向にはみ出ていたら
+        if not tate: # 縦方向にはみ出ていたら
             vy *= -1
         bb_rct.move_ip(vx, vy)
         screen.blit(bb_img, bb_rct)
