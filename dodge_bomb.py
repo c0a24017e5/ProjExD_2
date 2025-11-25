@@ -38,7 +38,7 @@ def gameover(screen: pg.Surface) -> None:
     go_img.set_alpha(190) # 透明度設定
     gmov = pg.font.Font(None, 80) # game over 用フォント
     txt = gmov.render("Game Over",
-                       True, (255, 255, 255))
+                        True, (255, 255, 255))
     txt_rect = txt.get_rect()
     txt_rect.center = (WIDTH/2, HEIGHT/2) # 画面中央に配置
     go_img.blit(txt, txt_rect)
@@ -49,6 +49,24 @@ def gameover(screen: pg.Surface) -> None:
     pg.display.update()
     pg.time.wait(5000) # 5秒間表示
 
+
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    サイズの異なる爆弾Surfaceを10個生成し、リストに格納する
+    加速度リストも生成する
+    戻り値：(爆弾Surfaceのリスト, 加速度のリスト)
+    """
+    bb_imgs = []
+    for r in range(1, 11):
+        bb_img = pg.Surface((20 * r, 20 * r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10 * r, 10 * r), 10 * r)
+        bb_img.set_colorkey((0, 0, 0)) # 黒を透過
+        bb_imgs.append(bb_img)
+    
+    bb_accs = [a for a in range(1, 11)] # 加速度リスト [1,..., 10]
+    return bb_imgs, bb_accs
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -56,6 +74,10 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+    
+    bb_imgs, bb_accs = init_bb_imgs() # 爆弾画像リストと加速度リストの初期化
+    bb_rct = bb_imgs[0].get_rect() # 最初の爆弾rect
+    
     bb_img = pg.Surface((20,20)) # 空のsurface
     pg.draw.circle(bb_img,(255, 0, 0), (10, 10), 10) # 半径10の赤い円を描写
     bb_img.set_colorkey((0, 0, 0)) # 黒色透過
@@ -96,12 +118,24 @@ def main():
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(kk_img, kk_rct)
+        
+        idx = min(tmr // 400, 9)
+        bb_img = bb_imgs[idx]
+        acc = bb_accs[idx]
+        bb_rct.width = bb_img.get_rect().width
+        bb_rct.height = bb_img.get_rect().height
+        
+        avx = vx * acc # 速度の計算
+        avy = vy * acc
+        
+        bb_rct.move_ip(avx, avy)
+        
         yoko, tate = check_bound(bb_rct)
         if not yoko: # 横方向にはみ出ていたら
             vx *= -1
         if not tate: # 縦方向にはみ出ていたら
             vy *= -1
-        bb_rct.move_ip(vx, vy)
+        
         screen.blit(bb_img, bb_rct)
         pg.display.update()
         tmr += 1
