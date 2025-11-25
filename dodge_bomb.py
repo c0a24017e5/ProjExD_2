@@ -37,8 +37,7 @@ def gameover(screen: pg.Surface) -> None:
     pg.draw.rect(go_img, (0, 0, 0), (0,0, WIDTH, HEIGHT)) # 黒い四角を描写
     go_img.set_alpha(190) # 透明度設定
     gmov = pg.font.Font(None, 80) # game over 用フォント
-    txt = gmov.render("Game Over",
-                        True, (255, 255, 255))
+    txt = gmov.render("Game Over", True, (255, 255, 255))
     txt_rect = txt.get_rect()
     txt_rect.center = (WIDTH/2, HEIGHT/2) # 画面中央に配置
     go_img.blit(txt, txt_rect)
